@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34511.84
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservice.Register.Function", "Microservice.Register.Function\Microservice.Register.Function.csproj", "{91B84712-E964-42BE-9C18-8D8464C1A92F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservice.Register.Function.Test.Unit", "Microservice.Register.Function.Test.Unit\Microservice.Register.Function.Test.Unit.csproj", "{7A78C335-D19E-4944-910B-2AC83FA80473}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CE801C9B-B624-4A78-B959-B941C44E3041}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{91B84712-E964-42BE-9C18-8D8464C1A92F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91B84712-E964-42BE-9C18-8D8464C1A92F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91B84712-E964-42BE-9C18-8D8464C1A92F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91B84712-E964-42BE-9C18-8D8464C1A92F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A78C335-D19E-4944-910B-2AC83FA80473}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A78C335-D19E-4944-910B-2AC83FA80473}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A78C335-D19E-4944-910B-2AC83FA80473}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A78C335-D19E-4944-910B-2AC83FA80473}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {132E8846-04DB-4ABF-9589-DA5822227468}
+	EndGlobalSection
+EndGlobal

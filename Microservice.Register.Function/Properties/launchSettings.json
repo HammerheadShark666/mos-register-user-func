@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "Microservice.Register.Function.Function": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7073",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "AZURE_FUNCTIONS_ENVIRONMENT": "Development",
+        "DOTNET_USE_POLLING_FILE_WATCHER": "1",
+        "AzureWebJobsScriptRoot": "/home/site/wwwroot",
+        "AzureFunctionsJobHost__Logging__Console__IsEnabled": "true"        
+      }
+    }
+  }
+}
