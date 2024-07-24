@@ -62,7 +62,7 @@
 						}
 					}
 				},
-				"url": "http://{{register_url}}/api/register"
+				"url": "https://{{register_url}}/api/register"
 			},
 			"response": []
 		}
