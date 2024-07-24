@@ -54,4 +54,4 @@ jobs:
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
       - name: Run API tests
         run: |
-          postman collection run "${{ github.workspace }}/PostmanCollections/MOS_Register_Azure_Function_V1_postman_collection.json.json" -e "4654363-0bedeeaa-9a5f-4de3-80bc-b16000be1246" --integration-id "165236-${{ github.run_id }}"
+          postman collection run "${{ github.workspace }}/PostmanCollections/MOS_Register_Azure_Function_V1_postman_collection.json.json" -e "2e0b2e90-fa17-4d19-b605-3dfe18d994e7" --integration-id "165236-${{ github.run_id }}"
