@@ -1,0 +1,70 @@
+{
+	"info": {
+		"_postman_id": "1095a2a4-3c39-4ada-81b1-29dbd7501103",
+		"name": "Function",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "{{register_url}}/api/register",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "27a505ff-131c-4e21-a2a4-197a3724bfb8",
+						"exec": [
+							"let counter = parseInt(pm.environment.get(\"counter\"));\r",
+							"\r",
+							"counter = counter + 1;\r",
+							"\r",
+							"pm.environment.set(\"counter\", counter);\r",
+							"pm.environment.set(\"username\", counter + \"-user@example.com\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "d726d0f3-de4a-4ba5-a41b-d2f7bc89565f",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"let textData = pm.response.text();  \r",
+							"\r",
+							"pm.test(\"Has succesful message\", function () { \r",
+							"   pm.expect(textData).to.equal(\"Registration Successful\"); \r",
+							"});\r",
+							"\r",
+							"setTimeout(() => {  console.log('Waiting for azure functions to pick up service bus messages '); }, 3000);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "44dd1f4e-5e12-4479-8ff7-afab6d18250d",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Email\": \"{{counter}}-user@example.com\", \r\n    \"Password\": \"{{password}}\",\r\n    \"ConfirmPassword\": \"{{password}}\",\r\n    \"Surname\": \"Test_Surname{{counter}}\",\r\n    \"FirstName\": \"Test_FirstName{{counter}}\",\r\n    \"Address\": {\r\n        \"AddressLine1\": \"AddressLine1-{{counter}}\",\r\n        \"AddressLine2\": \"AddressLine2-{{counter}}\",\r\n        \"AddressLine3\": \"AddressLine3-{{counter}}\",\r\n        \"TownCity\": \"TownCity{{counter}}\",\r\n        \"County\": \"County{{counter}}\",\r\n        \"Postcode\": \"PC11 TRE\",\r\n        \"CountryId\": 1\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://{{register_url}}/api/register"
+			},
+			"response": []
+		}
+	]
+}
