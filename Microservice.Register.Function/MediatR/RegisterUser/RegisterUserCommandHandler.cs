@@ -25,8 +25,8 @@ public class RegisterUserCommandHandler(IUserRepository userRepository,
 
         var responses = GetSerialisedRegisteredUserResponses(request, user);
 
-        await _azureServiceBusHelper.SendMessage(Constants.AzureServiceBusQueueRegisteredUserCustomer, responses.Item1);
-        await _azureServiceBusHelper.SendMessage(Constants.AzureServiceBusQueueRegisteredUserCustomerAddress, responses.Item2);
+        await _azureServiceBusHelper.SendMessage(EnvironmentVariables.AzureServiceBusQueueRegisteredUserCustomer, responses.Item1);
+        await _azureServiceBusHelper.SendMessage(EnvironmentVariables.AzureServiceBusQueueRegisteredUserCustomerAddress, responses.Item2);
           
         return Unit.Value;
     }
