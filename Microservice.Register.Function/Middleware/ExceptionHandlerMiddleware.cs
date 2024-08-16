@@ -51,7 +51,7 @@ public class ExceptionHandlerMiddleware : IFunctionsWorkerMiddleware
                     res = req!.CreateResponse();
                     res.StatusCode = HttpStatusCode.InternalServerError;
 
-                    await res.WriteStringAsync("Internal service error. Please contact an administrator");
+                    await res.WriteStringAsync("Internal service error. Please contact an administrator.");
                     context.GetInvocationResult().Value = res;
                     break;
             }
