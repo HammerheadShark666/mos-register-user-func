@@ -14,20 +14,20 @@ public class RegisterUserCommandHandler(IUserRepository userRepository,
                                         IAzureServiceBusHelper azureServiceBusHelper,
                                         IAuthenticationHelper authenticationHelper) : IRequestHandler<RegisterUserRequest, Unit>
 {
-    private ILogger<RegisterUserCommandHandler> _logger { get; set; } = logger; 
-    private IUserRepository _userRepository { get; set; } = userRepository; 
+    private ILogger<RegisterUserCommandHandler> _logger { get; set; } = logger;
+    private IUserRepository _userRepository { get; set; } = userRepository;
     private IAzureServiceBusHelper _azureServiceBusHelper { get; set; } = azureServiceBusHelper;
     private IAuthenticationHelper _authenticationHelper { get; set; } = authenticationHelper;
 
     public async Task<Unit> Handle(RegisterUserRequest request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.AddAsync(CreateUserAsync(request)); 
+        var user = await _userRepository.AddAsync(CreateUserAsync(request));
 
         var responses = GetSerialisedRegisteredUserResponses(request, user);
 
         await _azureServiceBusHelper.SendMessage(EnvironmentVariables.AzureServiceBusQueueRegisteredUserCustomer, responses.Item1);
         await _azureServiceBusHelper.SendMessage(EnvironmentVariables.AzureServiceBusQueueRegisteredUserCustomerAddress, responses.Item2);
-          
+
         return Unit.Value;
     }
 
@@ -37,7 +37,7 @@ public class RegisterUserCommandHandler(IUserRepository userRepository,
         {
             Id = Guid.NewGuid(),
             Email = registerUserRequest.Email,
-            Role = Role.User, 
+            Role = Role.User,
             Verified = DateTime.Now,
             VerificationToken = _authenticationHelper.CreateRandomToken(),
             PasswordHash = BC.HashPassword(registerUserRequest.Password),
@@ -47,8 +47,8 @@ public class RegisterUserCommandHandler(IUserRepository userRepository,
     }
 
     private Tuple<string, string> GetSerialisedRegisteredUserResponses(RegisterUserRequest request, Domain.User user)
-    { 
-        return new Tuple<string, string>(GetSerializedRegisteredUser(user.Id, request), 
+    {
+        return new Tuple<string, string>(GetSerializedRegisteredUser(user.Id, request),
                                             GetSerializedRegisteredUserAddress(user.Id, request.Address));
     }
 

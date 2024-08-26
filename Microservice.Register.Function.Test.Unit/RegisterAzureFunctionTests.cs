@@ -28,22 +28,20 @@ public class RegisterAzureFunctionTests
     [Test]
     public async Task Azure_function_register_user_return_succeed()
     {
-        var registerRequest = new RegisterUserRequest("ValidEmail@hotmail.com", "TestSurname", "TestFirstName", 
+        var registerRequest = new RegisterUserRequest("ValidEmail@hotmail.com", "TestSurname", "TestFirstName",
                                                       "Password1", "Password1",
                                                       new RegisterUserAddress("AddressLine1", "AddressLine2", "AddressLine3",
-                                                                              "TownCity1", "County1", "Postcode1", 1)); 
+                                                                              "TownCity1", "County1", "Postcode1", 1));
 
-        using (var requestStream = new MemoryStream())
-        {
-            requestStream.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(registerRequest)));
-            requestStream.Flush();
-            requestStream.Position = 0;
+        using var requestStream = new MemoryStream();
+        requestStream.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(registerRequest)));
+        requestStream.Flush();
+        requestStream.Position = 0;
 
-            var mockHttpRequest = new Mock<HttpRequest>();
-            mockHttpRequest.Setup(x => x.Body).Returns(requestStream);
+        var mockHttpRequest = new Mock<HttpRequest>();
+        mockHttpRequest.Setup(x => x.Body).Returns(requestStream);
 
-            Functions.Register registerFunction = new Functions.Register(_mockLogger.Object, _mockMediator.Object, _jsonHelper);
-            await registerFunction.Run(mockHttpRequest.Object); 
-        }
+        Functions.Register registerFunction = new(_mockLogger.Object, _mockMediator.Object, _jsonHelper);
+        await registerFunction.Run(mockHttpRequest.Object);
     }
 }

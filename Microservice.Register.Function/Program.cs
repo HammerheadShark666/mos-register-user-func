@@ -1,6 +1,6 @@
 using FluentValidation;
 using MediatR;
-using Microservice.Register.Function.Data.Contexts;
+using Microservice.Register.Function.Data.Context;
 using Microservice.Register.Function.Data.Repository;
 using Microservice.Register.Function.Data.Repository.Interfaces;
 using Microservice.Register.Function.Helpers;
@@ -14,21 +14,21 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.Reflection; 
+using System.Reflection;
 
 var host = new HostBuilder()
-    .ConfigureFunctionsWebApplication(builder => builder.UseMiddleware<ExceptionHandlerMiddleware>()) 
+    .ConfigureFunctionsWebApplication(builder => builder.UseMiddleware<ExceptionHandlerMiddleware>())
     .ConfigureAppConfiguration(c =>
     {
         c.AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
          .AddEnvironmentVariables();
-    })    
-    .ConfigureServices(services => 
+    })
+    .ConfigureServices(services =>
     {
         var configuration = services.BuildServiceProvider().GetService<IConfiguration>();
 
         services.AddApplicationInsightsTelemetryWorkerService();
-        services.ConfigureFunctionsApplicationInsights();         
+        services.ConfigureFunctionsApplicationInsights();
         services.AddValidatorsFromAssemblyContaining<RegisterUserValidator>();
         services.AddMediatR(_ => _.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
@@ -37,9 +37,9 @@ var host = new HostBuilder()
         services.AddScoped<IAuthenticationHelper, AuthenticationHelper>();
         services.AddScoped<IJsonHelper, JsonHelper>();
         services.AddSingleton<DefaultData>();
-        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); 
-        services.AddMemoryCache();          
-        services.AddApplicationInsightsTelemetry();    
+        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        services.AddMemoryCache();
+        services.AddApplicationInsightsTelemetry();
         services.AddDbContextFactory<UserDbContext>(options =>
         options.UseSqlServer(configuration.GetConnectionString(Constants.DatabaseConnectionString),
             options => options.EnableRetryOnFailure()));
@@ -47,8 +47,8 @@ var host = new HostBuilder()
         services.AddLogging(logging =>
         {
             logging.AddConsole();
-        }); 
-    }) 
-    .Build();  
+        });
+    })
+    .Build();
 
 await host.RunAsync();

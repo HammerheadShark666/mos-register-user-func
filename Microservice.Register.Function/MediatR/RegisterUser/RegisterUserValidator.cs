@@ -1,5 +1,5 @@
-﻿using Microservice.Register.Function.Data.Repository.Interfaces;
-using FluentValidation;
+﻿using FluentValidation;
+using Microservice.Register.Function.Data.Repository.Interfaces;
 
 namespace Microservice.Register.Function.MediatR.RegisterUser;
 
@@ -28,7 +28,8 @@ public class RegisterUserValidator : AbstractValidator<RegisterUserRequest>
             .Equal(registerUserRequest => registerUserRequest.ConfirmPassword)
             .WithMessage("Password and Confirm Password must be same");
 
-        RuleFor(registerUserRequest => registerUserRequest).MustAsync(async (registerUserRequest, cancellation) => {
+        RuleFor(registerUserRequest => registerUserRequest).MustAsync(async (registerUserRequest, cancellation) =>
+        {
             return await EmailExists(registerUserRequest);
         }).WithMessage("User with this email already exists");
 
@@ -58,11 +59,11 @@ public class RegisterUserValidator : AbstractValidator<RegisterUserRequest>
 
         RuleFor(registerUserRequest => registerUserRequest.Address.CountryId)
             .NotEmpty().WithMessage("Country Id is required.")
-            .GreaterThan(0).WithMessage("Country Id is invalid."); 
+            .GreaterThan(0).WithMessage("Country Id is invalid.");
     }
 
     protected async Task<bool> EmailExists(RegisterUserRequest registerUserRequest)
-    { 
+    {
         return !await _userRepository.UserExistsAsync(registerUserRequest.Email);
     }
 }

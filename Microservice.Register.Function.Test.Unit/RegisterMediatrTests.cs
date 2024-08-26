@@ -15,15 +15,15 @@ namespace Microservice.Register.Function.Test.Unit;
 [TestFixture]
 public class RegisterMediatrTests
 {
-    private Mock<IUserRepository> userRepositoryMock = new Mock<IUserRepository>();
-    private Mock<IAzureServiceBusHelper> azureServiceBusHelperMock = new Mock<IAzureServiceBusHelper>();
-    private ServiceCollection services = new ServiceCollection();
+    private Mock<IUserRepository> userRepositoryMock = new();
+    private Mock<IAzureServiceBusHelper> azureServiceBusHelperMock = new();
+    private ServiceCollection services = new();
     private ServiceProvider serviceProvider;
-    private IMediator mediator; 
+    private IMediator mediator;
 
     [OneTimeSetUp]
     public void OneTimeSetup()
-    { 
+    {
         services.AddValidatorsFromAssemblyContaining<RegisterUserValidator>();
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(RegisterUserCommandHandler).Assembly));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
@@ -31,9 +31,9 @@ public class RegisterMediatrTests
         services.AddScoped<IAzureServiceBusHelper>(sp => azureServiceBusHelperMock.Object);
         services.AddScoped<IAuthenticationHelper, AuthenticationHelper>();
         services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
-            
+
         serviceProvider = services.BuildServiceProvider();
-        mediator = serviceProvider.GetRequiredService<IMediator>(); 
+        mediator = serviceProvider.GetRequiredService<IMediator>();
     }
 
     [OneTimeTearDown]
@@ -46,28 +46,32 @@ public class RegisterMediatrTests
     [Test]
     public async Task User_registered_return_success_message()
     {
-        var user = new Domain.User() {Id = Guid.NewGuid(),
-                                      Email = "ValidEmail@hotmail.com",
-                                      Password = "Password1", ConfirmPassword = "Password1" }; 
+        var user = new Domain.User()
+        {
+            Id = Guid.NewGuid(),
+            Email = "ValidEmail@hotmail.com",
+            Password = "Password1",
+            ConfirmPassword = "Password1"
+        };
 
         userRepositoryMock
                 .Setup(x => x.UserExistsAsync("ValidEmail@hotmail.com"))
-                .Returns(Task.FromResult(false)); 
+                .Returns(Task.FromResult(false));
 
         userRepositoryMock
                 .Setup(x => x.AddAsync(It.IsAny<User>()))
-                .Returns(Task.FromResult(user)); 
+                .Returns(Task.FromResult(user));
 
         azureServiceBusHelperMock
             .Setup(x => x.SendMessage(It.IsAny<string>(), It.IsAny<string>()))
-            .Returns(Task.FromResult(default(object))); 
+            .Returns(Task.FromResult(default(object)));
 
         var registerUserRequest = new RegisterUserRequest("ValidEmail@hotmail.com", "TestSurname", "TestFirstName",
                                                           "Password1", "Password1",
                                                            new RegisterUserAddress("AddressLine1", "AddressLine2", "AddressLine3",
                                                                                    "TownCity1", "County1", "Pcode1", 1));
 
-        await mediator.Send(registerUserRequest);        
+        await mediator.Send(registerUserRequest);
     }
 
     [Test]
@@ -142,7 +146,7 @@ public class RegisterMediatrTests
                 .Setup(x => x.UserExistsAsync("ValidEmail@hotmail.com"))
                 .Returns(Task.FromResult(false));
 
-        var command = new RegisterUserRequest("", "", "","", "",
+        var command = new RegisterUserRequest("", "", "", "", "",
                                               new RegisterUserAddress("AddressLine1", "AddressLine2", "AddressLine3",
                                                                       "TownCity1", "County1", "Pcode1", 1));
 
@@ -206,7 +210,7 @@ public class RegisterMediatrTests
                                               "Password1", "Password1",
                                               new RegisterUserAddress("AddressLine1AddressLine1AddressLine1AddressLine1AddressLine1",
                                                                       "AddressLine2", "AddressLine3",
-                                                                      "TownCityTownCityTownCityTownCityTownCityTownCityTownCityTownCity", 
+                                                                      "TownCityTownCityTownCityTownCityTownCityTownCityTownCityTownCity",
                                                                       "CountyCountyCountyCountyCountyCountyCountyCountyCounty",
                                                                       "PostcodePostcodePostcodePostcodePostcodePostcodePostcode", 16));
 
@@ -215,10 +219,10 @@ public class RegisterMediatrTests
             await mediator.Send(command);
         });
 
-        Assert.That(validationException.Errors.Count, Is.EqualTo(4)); 
-        Assert.That(validationException.Errors.ElementAt(0).ErrorMessage, Is.EqualTo("Address Line 1 length between 1 and 50.")); 
-        Assert.That(validationException.Errors.ElementAt(1).ErrorMessage, Is.EqualTo("TownCity length between 1 and 50.")); 
-        Assert.That(validationException.Errors.ElementAt(2).ErrorMessage, Is.EqualTo("County length between 1 and 50.")); 
-        Assert.That(validationException.Errors.ElementAt(3).ErrorMessage, Is.EqualTo("Postcode length between 6 and 8."));  
+        Assert.That(validationException.Errors.Count, Is.EqualTo(4));
+        Assert.That(validationException.Errors.ElementAt(0).ErrorMessage, Is.EqualTo("Address Line 1 length between 1 and 50."));
+        Assert.That(validationException.Errors.ElementAt(1).ErrorMessage, Is.EqualTo("TownCity length between 1 and 50."));
+        Assert.That(validationException.Errors.ElementAt(2).ErrorMessage, Is.EqualTo("County length between 1 and 50."));
+        Assert.That(validationException.Errors.ElementAt(3).ErrorMessage, Is.EqualTo("Postcode length between 6 and 8."));
     }
 }

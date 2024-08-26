@@ -7,6 +7,6 @@ public class Enums
         SuperAdmin,
         Admin,
         Moderator,
-        User 
+        User
     }
-}    
+}

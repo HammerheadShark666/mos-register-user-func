@@ -28,21 +28,21 @@ public class ExceptionHandlerMiddleware : IFunctionsWorkerMiddleware
             var res = req!.CreateResponse();
 
             switch (exception)
-            { 
+            {
                 case FluentValidation.ValidationException ex:
- 
+
                     var response = new
-                    { 
+                    {
                         detail = GetMessage(exception),
                         errors = GetErrors(exception)
-                    }; 
+                    };
 
                     req = await context.GetHttpRequestDataAsync();
                     res = req!.CreateResponse();
                     res.StatusCode = HttpStatusCode.BadRequest;
                     await res.WriteStringAsync(JsonSerializer.Serialize(response));
                     context.GetInvocationResult().Value = res;
-                    break; 
+                    break;
 
                 default:
                     logger.LogError(exception.Message);
@@ -55,8 +55,8 @@ public class ExceptionHandlerMiddleware : IFunctionsWorkerMiddleware
                     context.GetInvocationResult().Value = res;
                     break;
             }
-        } 
-    } 
+        }
+    }
 
     private static string GetMessage(Exception exception) =>
         exception switch
