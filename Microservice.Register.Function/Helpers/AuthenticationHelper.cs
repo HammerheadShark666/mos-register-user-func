@@ -4,15 +4,13 @@ using System.Security.Cryptography;
 namespace Microservice.Register.Function.Helpers;
 
 public class AuthenticationHelper : IAuthenticationHelper
-{    
+{
     public string CreateRandomToken()
-    {            
-        using (var rng = RandomNumberGenerator.Create())
-        {
-            var randomNumber = new byte[40];
-            rng.GetBytes(randomNumber);
-            return CleanToken(randomNumber);
-        } 
+    {
+        using var rng = RandomNumberGenerator.Create();
+        var randomNumber = new byte[40];
+        rng.GetBytes(randomNumber);
+        return CleanToken(randomNumber);
     }
 
     public string CleanToken(byte[] randomNumber)
@@ -22,5 +20,5 @@ public class AuthenticationHelper : IAuthenticationHelper
                                                    .Replace("=", "4")
                                                    .Replace("?", "G")
                                                    .Replace("/", "X");
-    } 
+    }
 }
