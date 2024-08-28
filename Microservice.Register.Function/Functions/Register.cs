@@ -21,7 +21,7 @@ public class Register(ILogger<Register> logger, IMediator mediator, IJsonHelper 
 
         await _mediator.Send(registerUserRequest);
 
-        _logger.LogInformation(string.Format("Registered User - {0} {1} - {2}", registerUserRequest.FirstName, registerUserRequest.Surname, registerUserRequest.Email));
+        _logger.LogInformation($"Registered User - {registerUserRequest.FirstName} {registerUserRequest.Surname} - {registerUserRequest.Email}");
 
         return new OkObjectResult("Registration Successful");
     }
