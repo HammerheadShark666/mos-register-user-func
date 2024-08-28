@@ -4,7 +4,7 @@ namespace Microservice.Register.Function.Data.Context;
 
 public class DefaultData
 {
-    public List<Microservice.Register.Function.Domain.User> GetUserDefaultData()
+    public static List<Domain.User> GetUserDefaultData()
     {
         return
         [
@@ -13,7 +13,7 @@ public class DefaultData
         ];
     }
 
-    private Domain.User CreateUser(Guid id, string email, string passwordHash, Enums.Role role, string verificationToken, DateTime verified, DateTime created)
+    private static Domain.User CreateUser(Guid id, string email, string passwordHash, Enums.Role role, string verificationToken, DateTime verified, DateTime created)
     {
         return new Domain.User { Id = id, Email = email, PasswordHash = passwordHash, Role = role, VerificationToken = verificationToken, Verified = verified, Created = created };
     }

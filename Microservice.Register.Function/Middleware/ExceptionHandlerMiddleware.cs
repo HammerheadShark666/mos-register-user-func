@@ -8,12 +8,8 @@ using System.Text.Json;
 
 namespace Microservice.Register.Function.Middleware;
 
-public class ExceptionHandlerMiddleware : IFunctionsWorkerMiddleware
+public class ExceptionHandlerMiddleware() : IFunctionsWorkerMiddleware
 {
-    private readonly ILogger<ExceptionHandlerMiddleware> _logger;
-
-    public ExceptionHandlerMiddleware(ILogger<ExceptionHandlerMiddleware> logger) => _logger = logger;
-
     public async Task Invoke(FunctionContext context, FunctionExecutionDelegate next)
     {
         try
@@ -29,7 +25,7 @@ public class ExceptionHandlerMiddleware : IFunctionsWorkerMiddleware
 
             switch (exception)
             {
-                case FluentValidation.ValidationException ex:
+                case ValidationException:
 
                     var response = new
                     {
