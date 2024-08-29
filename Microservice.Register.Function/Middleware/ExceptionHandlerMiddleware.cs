@@ -19,9 +19,8 @@ public class ExceptionHandlerMiddleware() : IFunctionsWorkerMiddleware
         catch (Exception exception)
         {
             var logger = context.GetLogger<ExceptionHandlerMiddleware>();
-
-            var req = await context.GetHttpRequestDataAsync();
-            var res = req!.CreateResponse();
+            HttpResponseData? res;
+            HttpRequestData? req;
 
             switch (exception)
             {
@@ -41,7 +40,7 @@ public class ExceptionHandlerMiddleware() : IFunctionsWorkerMiddleware
                     break;
 
                 default:
-                    logger.LogError(exception.Message);
+                    logger.LogError("{exception.Message}", exception.Message);
 
                     req = await context.GetHttpRequestDataAsync();
                     res = req!.CreateResponse();

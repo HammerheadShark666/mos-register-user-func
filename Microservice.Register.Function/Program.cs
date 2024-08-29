@@ -25,7 +25,8 @@ var host = new HostBuilder()
     })
     .ConfigureServices(services =>
     {
-        var configuration = services.BuildServiceProvider().GetService<IConfiguration>();
+        var configuration = services.BuildServiceProvider().GetService<IConfiguration>()
+                              ?? throw new Exception("Configuration not created.");
 
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();

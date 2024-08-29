@@ -12,18 +12,14 @@ public class RegisterUserCommandHandler(IUserRepository userRepository,
                                         IAzureServiceBusHelper azureServiceBusHelper,
                                         IAuthenticationHelper authenticationHelper) : IRequestHandler<RegisterUserRequest, Unit>
 {
-    private IUserRepository _userRepository { get; set; } = userRepository;
-    private IAzureServiceBusHelper _azureServiceBusHelper { get; set; } = azureServiceBusHelper;
-    private IAuthenticationHelper _authenticationHelper { get; set; } = authenticationHelper;
-
     public async Task<Unit> Handle(RegisterUserRequest request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.AddAsync(CreateUserAsync(request));
+        var user = await userRepository.AddAsync(CreateUserAsync(request));
 
         var responses = GetSerialisedRegisteredUserResponses(request, user);
 
-        await _azureServiceBusHelper.SendMessage(EnvironmentVariables.AzureServiceBusQueueRegisteredUserCustomer, responses.Item1);
-        await _azureServiceBusHelper.SendMessage(EnvironmentVariables.AzureServiceBusQueueRegisteredUserCustomerAddress, responses.Item2);
+        await azureServiceBusHelper.SendMessage(EnvironmentVariables.AzureServiceBusQueueRegisteredUserCustomer, responses.Item1);
+        await azureServiceBusHelper.SendMessage(EnvironmentVariables.AzureServiceBusQueueRegisteredUserCustomerAddress, responses.Item2);
 
         return Unit.Value;
     }
@@ -36,7 +32,7 @@ public class RegisterUserCommandHandler(IUserRepository userRepository,
             Email = registerUserRequest.Email,
             Role = Role.User,
             Verified = DateTime.Now,
-            VerificationToken = _authenticationHelper.CreateRandomToken(),
+            VerificationToken = authenticationHelper.CreateRandomToken(),
             PasswordHash = BC.HashPassword(registerUserRequest.Password),
             Password = registerUserRequest.Password,
             ConfirmPassword = registerUserRequest.ConfirmPassword
