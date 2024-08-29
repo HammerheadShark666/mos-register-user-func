@@ -16,6 +16,10 @@ env:
 jobs:   
    unit-tests:
     runs-on: ubuntu-latest 
+    env: 
+      AZURE_SERVICE_BUS_CONNECTION: ${{ secrets.AZURE_SERVICE_BUS_CONNECTION }}
+      AZURE_SERVICE_BUS_QUEUE_CUSTOMER: ${{ secrets.AZURE_SERVICE_BUS_QUEUE_CUSTOMER }}
+      AZURE_SERVICE_BUS_QUEUE_CUSTOMER_ADDRESS: ${{ secrets.AZURE_SERVICE_BUS_QUEUE_CUSTOMER_ADDRESS }}      
     steps:
       - uses: actions/checkout@v4
 
