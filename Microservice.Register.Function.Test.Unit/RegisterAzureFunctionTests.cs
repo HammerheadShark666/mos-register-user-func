@@ -14,7 +14,6 @@ public class RegisterAzureFunctionTests
 {
     private readonly Mock<IMediator> _mockMediator;
     private readonly Mock<ILogger<Functions.Register>> _mockLogger;
-    private readonly Functions.Register _register;
     private readonly IJsonHelper _jsonHelper;
 
     public RegisterAzureFunctionTests()
@@ -22,7 +21,6 @@ public class RegisterAzureFunctionTests
         _jsonHelper = new JsonHelper();
         _mockMediator = new Mock<IMediator>();
         _mockLogger = new Mock<ILogger<Functions.Register>>();
-        _register = new Functions.Register(_mockLogger.Object, _mockMediator.Object, _jsonHelper);
     }
 
     [Test]

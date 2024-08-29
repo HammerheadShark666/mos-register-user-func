@@ -10,18 +10,15 @@ namespace Microservice.Register.Function.Functions;
 
 public class Register(ILogger<Register> logger, IMediator mediator, IJsonHelper jsonHelper)
 {
-    private ILogger<Register> _logger { get; set; } = logger;
-    private IMediator _mediator { get; set; } = mediator;
-    private IJsonHelper _jsonHelper { get; set; } = jsonHelper;
 
     [Function("register")]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request)
     {
-        var registerUserRequest = await _jsonHelper.GetRegisterUserRequestAsync<RegisterUserRequest>(request);
+        var registerUserRequest = await jsonHelper.GetRegisterUserRequestAsync<RegisterUserRequest>(request);
 
-        await _mediator.Send(registerUserRequest);
+        await mediator.Send(registerUserRequest);
 
-        _logger.LogInformation($"Registered User - {registerUserRequest.FirstName} {registerUserRequest.Surname} - {registerUserRequest.Email}");
+        logger.LogInformation("Registered User - {registerUserRequest.FirstName} {registerUserRequest.Surname} - {registerUserRequest.Email}", registerUserRequest.FirstName, registerUserRequest.Surname, registerUserRequest.Email);
 
         return new OkObjectResult("Registration Successful");
     }

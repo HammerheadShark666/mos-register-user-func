@@ -9,21 +9,14 @@ public class JsonHelper : IJsonHelper
 {
     public async Task<T> GetRegisterUserRequestAsync<T>(HttpRequest request) where T : class
     {
+        ArgumentNullException.ThrowIfNull("Request is null");
+
         string requestBody = String.Empty;
         using (StreamReader streamReader = new(request.Body))
         {
             requestBody = await streamReader.ReadToEndAsync();
         }
 
-        var registerUserRequest = JsonSerializer.Deserialize<T>(requestBody);
-
-        if (registerUserRequest == null)
-        {
-            throw new BadRequestException("Unable to deserialize request body.");
-        }
-        else
-        {
-            return registerUserRequest;
-        }
+        return JsonSerializer.Deserialize<T>(requestBody) ?? throw new JsonDeserializeException("Unable to deserialize request body.");
     }
 }
