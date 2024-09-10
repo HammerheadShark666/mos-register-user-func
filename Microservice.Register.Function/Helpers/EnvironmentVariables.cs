@@ -5,6 +5,7 @@ namespace Microservice.Register.Function.Helpers;
 public class EnvironmentVariables
 {
     public static string AzureServiceBusConnection => GetEnvironmentVariable(Constants.AzureServiceBusConnection);
+    public static string AzureServiceBusConnectionManagedIdentity => GetEnvironmentVariable(Constants.AzureServiceBusConnectionManagedIdentity);
     public static string AzureServiceBusQueueRegisteredUserCustomer => GetEnvironmentVariable(Constants.AzureServiceBusQueueRegisteredUserCustomer);
     public static string AzureServiceBusQueueRegisteredUserCustomerAddress => GetEnvironmentVariable(Constants.AzureServiceBusQueueRegisteredUserCustomerAddress);
 
