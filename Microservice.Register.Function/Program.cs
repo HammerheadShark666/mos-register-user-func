@@ -1,3 +1,4 @@
+using Azure.Identity;
 using FluentValidation;
 using MediatR;
 using Microservice.Register.Function.Data.Context;
@@ -10,6 +11,7 @@ using Microservice.Register.Function.Middleware;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -42,8 +44,15 @@ var host = new HostBuilder()
         services.AddMemoryCache();
         services.AddApplicationInsightsTelemetry();
         services.AddDbContextFactory<UserDbContext>(options =>
+
         options.UseSqlServer(configuration.GetConnectionString(Constants.DatabaseConnectionString),
             options => options.EnableRetryOnFailure()));
+
+        services.AddAzureClients(builder =>
+        {
+            builder.AddServiceBusClientWithNamespace(EnvironmentVariables.GetEnvironmentVariable(Constants.AzureServiceBusConnection));
+            builder.UseCredential(new ManagedIdentityCredential());
+        });
 
         services.AddLogging(logging =>
         {
