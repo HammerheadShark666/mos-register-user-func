@@ -46,9 +46,8 @@ public static class ServiceExtensions
     public static void ConfigureSqlServer(IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContextFactory<UserDbContext>(options =>
-
-        options.UseSqlServer(configuration.GetConnectionString(Constants.DatabaseConnectionString),
-            options => options.EnableRetryOnFailure()));
+            options.UseSqlServer(configuration.GetConnectionString(Constants.DatabaseConnectionString))
+        );
     }
 
     public static void ConfigureMemoryCache(IServiceCollection services)

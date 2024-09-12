@@ -3,6 +3,7 @@ using Microservice.Register.Function.Data.Repository.Interfaces;
 using Microservice.Register.Function.Helpers;
 using Microservice.Register.Function.Helpers.Interfaces;
 using System.Text.Json;
+using System.Transactions;
 using static Microservice.Register.Function.Helpers.Enums;
 using BC = BCrypt.Net.BCrypt;
 
@@ -14,12 +15,20 @@ public class RegisterUserCommandHandler(IUserRepository userRepository,
 {
     public async Task<Unit> Handle(RegisterUserRequest request, CancellationToken cancellationToken)
     {
-        var user = await userRepository.AddAsync(CreateUserAsync(request));
+        using (var ts = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+        {
+            var user = await userRepository.AddAsync(CreateUserAsync(request));
 
-        var responses = GetSerialisedRegisteredUserResponses(request, user);
+            using (var tx = new TransactionScope(TransactionScopeOption.Suppress, TransactionScopeAsyncFlowOption.Enabled))
+            {
+                var responses = GetSerialisedRegisteredUserResponses(request, user);
 
-        await azureServiceBusHelper.SendMessage(EnvironmentVariables.AzureServiceBusQueueRegisteredUserCustomer, responses.Item1);
-        await azureServiceBusHelper.SendMessage(EnvironmentVariables.AzureServiceBusQueueRegisteredUserCustomerAddress, responses.Item2);
+                await azureServiceBusHelper.SendMessage(EnvironmentVariables.AzureServiceBusQueueRegisteredUserCustomer, responses.Item1);
+                await azureServiceBusHelper.SendMessage(EnvironmentVariables.AzureServiceBusQueueRegisteredUserCustomerAddress, responses.Item2);
+                tx.Complete();
+            }
+            ts.Complete();
+        }
 
         return Unit.Value;
     }
