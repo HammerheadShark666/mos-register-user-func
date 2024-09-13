@@ -50,7 +50,7 @@ public static class ServiceExtensions
     {
         if (environment.IsProduction())
         {
-            services.AddDbContext<UserDbContext>(options =>
+            services.AddDbContextFactory<UserDbContext>(options =>
             {
                 SqlAuthenticationProvider.SetProvider(
                         SqlAuthenticationMethod.ActiveDirectoryManagedIdentity,
