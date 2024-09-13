@@ -6,12 +6,15 @@ using Microservice.Register.Function.Data.Repository;
 using Microservice.Register.Function.Data.Repository.Interfaces;
 using Microservice.Register.Function.Helpers.Interfaces;
 using Microservice.Register.Function.MediatR.RegisterUser;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 
@@ -43,11 +46,30 @@ public static class ServiceExtensions
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
     }
 
-    public static void ConfigureSqlServer(IServiceCollection services, IConfiguration configuration)
+    public static void ConfigureSqlServer(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
-        services.AddDbContextFactory<UserDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString(Constants.DatabaseConnectionString))
-        );
+        if (environment.IsProduction())
+        {
+            services.AddDbContext<UserDbContext>(options =>
+            {
+                SqlAuthenticationProvider.SetProvider(
+                        SqlAuthenticationMethod.ActiveDirectoryManagedIdentity,
+                        new ProductionAzureSQLProvider());
+                var sqlConnection = new SqlConnection(configuration.GetConnectionString(Constants.AzureDatabaseConnectionString));
+                options.UseSqlServer(sqlConnection);
+            });
+        }
+        else if (environment.IsDevelopment())
+        {
+            services.AddDbContextFactory<UserDbContext>(options =>
+            {
+                SqlAuthenticationProvider.SetProvider(
+                        SqlAuthenticationMethod.ActiveDirectoryServicePrincipal,
+                        new DevelopmentAzureSQLProvider());
+                var sqlConnection = new SqlConnection(configuration.GetConnectionString(Constants.LocalDatabaseConnectionString));
+                options.UseSqlServer(sqlConnection);
+            });
+        }
     }
 
     public static void ConfigureMemoryCache(IServiceCollection services)
@@ -55,9 +77,9 @@ public static class ServiceExtensions
         services.AddMemoryCache();
     }
 
-    public static void ConfigureServiceBusClient(IServiceCollection services)
+    public static void ConfigureServiceBusClient(IServiceCollection services, IWebHostEnvironment environment)
     {
-        if (Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") == null)
+        if (environment.IsProduction())
         {
             services.AddAzureClients(builder =>
             {
@@ -65,7 +87,7 @@ public static class ServiceExtensions
                 builder.UseCredential(new ManagedIdentityCredential());
             });
         }
-        else
+        else if (environment.IsDevelopment())
         {
             services.AddAzureClients(builder =>
             {
