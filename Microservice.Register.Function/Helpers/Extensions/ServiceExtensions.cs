@@ -5,6 +5,7 @@ using Microservice.Register.Function.Data.Context;
 using Microservice.Register.Function.Data.Repository;
 using Microservice.Register.Function.Data.Repository.Interfaces;
 using Microservice.Register.Function.Helpers.Interfaces;
+using Microservice.Register.Function.Helpers.Providers;
 using Microservice.Register.Function.MediatR.RegisterUser;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +19,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 
-namespace Microservice.Register.Function.Helpers;
+namespace Microservice.Register.Function.Helpers.Extensions;
 
 public static class ServiceExtensions
 {

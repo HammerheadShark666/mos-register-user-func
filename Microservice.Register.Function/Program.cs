@@ -1,4 +1,4 @@
-using Microservice.Register.Function.Helpers;
+using Microservice.Register.Function.Helpers.Extensions;
 using Microservice.Register.Function.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;

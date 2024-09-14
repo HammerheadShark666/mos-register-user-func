@@ -2,19 +2,18 @@
 using Azure.Identity;
 using Microsoft.Data.SqlClient;
 
-namespace Microservice.Register.Function.Helpers;
+namespace Microservice.Register.Function.Helpers.Providers;
 
-public class DevelopmentAzureSQLProvider : SqlAuthenticationProvider
+public class ProductionAzureSQLProvider : SqlAuthenticationProvider
 {
     private readonly TokenCredential _credential;
 
-    public DevelopmentAzureSQLProvider()
+    public ProductionAzureSQLProvider()
     {
-        var clientId = EnvironmentVariables.LocalDevelopmentClientId;
-        var clientSecret = EnvironmentVariables.LocalDevelopmentClientSecret;
-        var tenantId = EnvironmentVariables.LocalDevelopmentTenantId;
-
-        _credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
+        _credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions
+        {
+            ManagedIdentityClientId = EnvironmentVariables.AzureUserAssignedManagedIdentityClientId,
+        });
     }
 
     private static readonly string[] _azureSqlScopes =
@@ -29,5 +28,5 @@ public class DevelopmentAzureSQLProvider : SqlAuthenticationProvider
         return new SqlAuthenticationToken(tokenResult.Token, tokenResult.ExpiresOn);
     }
 
-    public override bool IsSupported(SqlAuthenticationMethod authenticationMethod) => authenticationMethod.Equals(SqlAuthenticationMethod.ActiveDirectoryServicePrincipal);
+    public override bool IsSupported(SqlAuthenticationMethod authenticationMethod) => authenticationMethod.Equals(SqlAuthenticationMethod.ActiveDirectoryManagedIdentity);
 }
