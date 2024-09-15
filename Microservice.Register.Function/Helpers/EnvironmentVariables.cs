@@ -8,9 +8,7 @@ public class EnvironmentVariables
     public static string AzureServiceBusConnectionManagedIdentity => GetEnvironmentVariable(Constants.AzureServiceBusConnectionManagedIdentity);
     public static string AzureServiceBusQueueRegisteredUserCustomer => GetEnvironmentVariable(Constants.AzureServiceBusQueueRegisteredUserCustomer);
     public static string AzureServiceBusQueueRegisteredUserCustomerAddress => GetEnvironmentVariable(Constants.AzureServiceBusQueueRegisteredUserCustomerAddress);
-    public static string AzureDatabaseConnectionString => GetEnvironmentVariable(Constants.AzureDatabaseConnectionString);
     public static string AzureUserAssignedManagedIdentityClientId => GetEnvironmentVariable(Constants.AzureUserAssignedManagedIdentityClientId);
-    public static string LocalDatabaseConnectionString => GetEnvironmentVariable(Constants.LocalDatabaseConnectionString);
     public static string LocalDevelopmentClientId => GetEnvironmentVariable(Constants.AzureLocalDevelopmentClientId);
     public static string LocalDevelopmentClientSecret => GetEnvironmentVariable(Constants.AzureLocalDevelopmentClientSecret);
     public static string LocalDevelopmentTenantId => GetEnvironmentVariable(Constants.AzureLocalDevelopmentTenantId);

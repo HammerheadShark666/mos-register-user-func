@@ -4,6 +4,7 @@ using MediatR;
 using Microservice.Register.Function.Data.Context;
 using Microservice.Register.Function.Data.Repository;
 using Microservice.Register.Function.Data.Repository.Interfaces;
+using Microservice.Register.Function.Helpers.Exceptions;
 using Microservice.Register.Function.Helpers.Interfaces;
 using Microservice.Register.Function.Helpers.Providers;
 using Microservice.Register.Function.MediatR.RegisterUser;
@@ -47,29 +48,21 @@ public static class ServiceExtensions
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
     }
 
-    public static void ConfigureSqlServer(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
+    public static void ConfigureSqlServer(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
         if (environment.IsProduction())
         {
-            services.AddDbContextFactory<UserDbContext>(options =>
-            {
-                SqlAuthenticationProvider.SetProvider(
-                        SqlAuthenticationMethod.ActiveDirectoryManagedIdentity,
-                        new ProductionAzureSQLProvider());
-                var sqlConnection = new SqlConnection(configuration.GetConnectionString(Constants.AzureDatabaseConnectionString));
-                options.UseSqlServer(sqlConnection);
-            });
+            var connectionString = configuration.GetConnectionString(Constants.AzureDatabaseConnectionString)
+                    ?? throw new DatabaseConnectionStringNotFound("Production database connection string not found.");
+
+            AddDbContextFactory(services, SqlAuthenticationMethod.ActiveDirectoryManagedIdentity, new ProductionAzureSQLProvider(), connectionString);
         }
         else if (environment.IsDevelopment())
         {
-            services.AddDbContextFactory<UserDbContext>(options =>
-            {
-                SqlAuthenticationProvider.SetProvider(
-                        SqlAuthenticationMethod.ActiveDirectoryServicePrincipal,
-                        new DevelopmentAzureSQLProvider());
-                var sqlConnection = new SqlConnection(configuration.GetConnectionString(Constants.LocalDatabaseConnectionString));
-                options.UseSqlServer(sqlConnection);
-            });
+            var connectionString = configuration.GetConnectionString(Constants.LocalDatabaseConnectionString)
+                    ?? throw new DatabaseConnectionStringNotFound("Development database connection string not found.");
+
+            AddDbContextFactory(services, SqlAuthenticationMethod.ActiveDirectoryServicePrincipal, new DevelopmentAzureSQLProvider(), connectionString);
         }
     }
 
@@ -84,7 +77,7 @@ public static class ServiceExtensions
         {
             services.AddAzureClients(builder =>
             {
-                builder.AddServiceBusClientWithNamespace(EnvironmentVariables.GetEnvironmentVariable(Constants.AzureServiceBusConnectionManagedIdentity));
+                builder.AddServiceBusClientWithNamespace(EnvironmentVariables.AzureServiceBusConnectionManagedIdentity);
                 builder.UseCredential(new ManagedIdentityCredential());
             });
         }
@@ -92,7 +85,7 @@ public static class ServiceExtensions
         {
             services.AddAzureClients(builder =>
             {
-                builder.AddServiceBusClient(EnvironmentVariables.GetEnvironmentVariable(Constants.AzureServiceBusConnection));
+                builder.AddServiceBusClient(EnvironmentVariables.AzureServiceBusConnection);
             });
         }
     }
@@ -102,6 +95,18 @@ public static class ServiceExtensions
         services.AddLogging(logging =>
         {
             logging.AddConsole();
+        });
+    }
+
+    private static void AddDbContextFactory(IServiceCollection services, SqlAuthenticationMethod sqlAuthenticationMethod, SqlAuthenticationProvider sqlAuthenticationProvider, string connectionString)
+    {
+        services.AddDbContextFactory<UserDbContext>(options =>
+        {
+            SqlAuthenticationProvider.SetProvider(
+                    sqlAuthenticationMethod,
+                    sqlAuthenticationProvider);
+            var sqlConnection = new SqlConnection(connectionString);
+            options.UseSqlServer(sqlConnection);
         });
     }
 }
